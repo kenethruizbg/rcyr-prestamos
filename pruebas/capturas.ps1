@@ -6,8 +6,24 @@ param([string]$Exe = "exe64\rcyr.exe")
 Add-Type -AssemblyName System.Drawing, System.Windows.Forms
 Add-Type @"
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 public class Ventana {
+    public delegate bool Visitar(IntPtr h, IntPtr l);
+    [DllImport("user32.dll")] public static extern bool EnumWindows(Visitar f, IntPtr l);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
+    [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+    public static IntPtr Buscar(string titulo) {
+        IntPtr encontrada = IntPtr.Zero;
+        EnumWindows((h, l) => {
+            if (!IsWindowVisible(h)) return true;
+            var texto = new StringBuilder(512);
+            GetWindowText(h, texto, 512);
+            if (texto.ToString().Contains(titulo)) { encontrada = h; return false; }
+            return true;
+        }, IntPtr.Zero);
+        return encontrada;
+    }
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT { public int Left, Top, Right, Bottom; }
     [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
@@ -24,17 +40,17 @@ function Capturar([string]$Peticion, [string]$Nombre, [int]$Lineas) {
     $orden = "title RCyR - prestamos & mode con cols=100 lines=$Lineas & prompt `$G & echo $Peticion| `"$exe`""
     $p = Start-Process cmd.exe -ArgumentList '/k', $orden -PassThru
     $h = [IntPtr]::Zero
-    # La ventana puede pertenecer a cmd, a conhost o a Windows Terminal: se
-    # busca por el título que le pone el propio cmd.
+    # La ventana puede ser de conhost o de Windows Terminal: se busca entre
+    # todas las ventanas por el título que le pone el propio cmd.
     for ($i = 0; $i -lt 40 -and $h -eq [IntPtr]::Zero; $i++) {
         Start-Sleep -Milliseconds 250
-        $v = Get-Process | Where-Object { $_.MainWindowTitle -like 'RCyR*' } | Select-Object -First 1
-        if ($v) { $h = $v.MainWindowHandle }
+        $h = [Ventana]::Buscar('RCyR - prestamos')
     }
     Start-Sleep -Seconds 2
     if ($h -ne [IntPtr]::Zero) {
+        [Ventana]::MoveWindow($h, 0, 0, 980, 600, $true) | Out-Null
         [Ventana]::SetForegroundWindow($h) | Out-Null
-        Start-Sleep -Milliseconds 500
+        Start-Sleep -Milliseconds 800
         $r = New-Object Ventana+RECT
         [Ventana]::GetWindowRect($h, [ref]$r) | Out-Null
         $x = $r.Left; $y = $r.Top; $w = $r.Right - $r.Left; $alto = $r.Bottom - $r.Top
