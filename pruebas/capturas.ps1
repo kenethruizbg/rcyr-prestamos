@@ -28,6 +28,7 @@ public class Ventana {
     public struct RECT { public int Left, Top, Right, Bottom; }
     [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
     [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+    [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, int atributo, out RECT r, int tam);
     [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h, int x, int y, int w, int alto, bool repintar);
 }
 "@
@@ -48,11 +49,14 @@ function Capturar([string]$Peticion, [string]$Nombre, [int]$Lineas) {
     }
     Start-Sleep -Seconds 2
     if ($h -ne [IntPtr]::Zero) {
-        [Ventana]::MoveWindow($h, 0, 0, 980, 600, $true) | Out-Null
+        [Ventana]::MoveWindow($h, 0, 0, 980, 460, $true) | Out-Null
         [Ventana]::SetForegroundWindow($h) | Out-Null
         Start-Sleep -Milliseconds 800
         $r = New-Object Ventana+RECT
-        [Ventana]::GetWindowRect($h, [ref]$r) | Out-Null
+        # Borde visible de la ventana (sin la sombra ni el marco invisible).
+        if ([Ventana]::DwmGetWindowAttribute($h, 9, [ref]$r, 16) -ne 0) {
+            [Ventana]::GetWindowRect($h, [ref]$r) | Out-Null
+        }
         $x = $r.Left; $y = $r.Top; $w = $r.Right - $r.Left; $alto = $r.Bottom - $r.Top
     } else {
         $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
