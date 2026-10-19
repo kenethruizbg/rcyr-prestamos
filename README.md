@@ -75,7 +75,7 @@ echo EXP-003| exe64\rcyr.exe
 .
 ├── main.pro                 Reglas, cálculos, casos de prueba y programa principal (lo que se entrega)
 ├── main.cl, main.ph         Declaración de la clase main (plantilla de consola de Visual Prolog)
-├── main.pack                Paquetes que usa el programa (consola, listas y cadenas)
+├── main.pack                Paquetes de la plantilla de consola
 ├── rcyr.vipprj              Proyecto de Visual Prolog
 ├── main.manifest, main.version, ProjectIcon.ico   Recursos de la plantilla
 ├── pruebas/
