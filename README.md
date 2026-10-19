@@ -4,13 +4,14 @@ Sistema basado en conocimiento para la concesión de préstamos personales. Es e
 
 ## Cómo probarlo
 
-1. En Visual Prolog (Windows), crea un proyecto nuevo de consola.
-2. Sustituye el `main.pro` del proyecto por el de este repo.
-3. Compila y ejecuta. Sale un informe con la decisión de cada uno de los 4 casos de prueba.
+Compila sin errores con Visual Prolog 11 (build 1112) y los 4 casos de prueba dan el resultado esperado.
+
+- **En Windows:** abrid `rcyr.vipprj` con Visual Prolog y ejecutadlo (Build › Execute). Las reglas están en `main.pro`; el resto son los ficheros del proyecto de consola.
+- **Sin Windows:** cada push compila y ejecuta el programa en GitHub Actions ([pestaña Actions](../../actions)). La salida sale en el paso "Ejecutar los casos de prueba" y se puede descargar con el `.exe` desde el artefacto `salida`.
 
 Resultados esperados: Ana se aprueba, Luis se deniega (D4), Marta se devuelve a la oficina (V4 y V8) y Pedro se escala (E3).
 
-Todavía no se ha compilado. Si da errores, mirad primero el operador `^`, `string::concatWithDelimiter`, el formato `%.2f` y las anotaciones `[out]`.
+El compilador da 5 avisos que no son errores. 4 son valores de la ontología que ningún caso de prueba usa (`pignoracionSaldos`, `pasaporte`, `tie`, `experian`). El quinto es que ningún caso usa `irpf`, porque no hay ningún autónomo.
 
 ## Las 20 reglas
 
