@@ -24,10 +24,12 @@ function Capturar([string]$Peticion, [string]$Nombre, [int]$Lineas) {
     $orden = "title RCyR - prestamos & mode con cols=100 lines=$Lineas & prompt `$G & echo $Peticion| `"$exe`""
     $p = Start-Process cmd.exe -ArgumentList '/k', $orden -PassThru
     $h = [IntPtr]::Zero
+    # La ventana puede pertenecer a cmd, a conhost o a Windows Terminal: se
+    # busca por el título que le pone el propio cmd.
     for ($i = 0; $i -lt 40 -and $h -eq [IntPtr]::Zero; $i++) {
         Start-Sleep -Milliseconds 250
-        $p.Refresh()
-        $h = $p.MainWindowHandle
+        $v = Get-Process | Where-Object { $_.MainWindowTitle -like 'RCyR*' } | Select-Object -First 1
+        if ($v) { $h = $v.MainWindowHandle }
     }
     Start-Sleep -Seconds 2
     if ($h -ne [IntPtr]::Zero) {
@@ -47,7 +49,7 @@ function Capturar([string]$Peticion, [string]$Nombre, [int]$Lineas) {
     $bmp.Save($archivo, [System.Drawing.Imaging.ImageFormat]::Png)
     $g.Dispose(); $bmp.Dispose()
     Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
-    Get-Process conhost, rcyr -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+    Get-Process rcyr -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
     "Captura: $archivo ($w x $alto, ventana: $($h -ne [IntPtr]::Zero))"
 }
 
