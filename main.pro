@@ -3,9 +3,9 @@
   Entregable: reglas en Visual Prolog
   Sistema basado en conocimiento para la concesión de préstamos personales
 
-  Fabián Alejandro Gutiérrez Peña
-  Sergio Mínguez Cruces
-  Keneth Guillermo Ruiz Martínez
+  Fabián Alejandro Gutiérrez Peña (568480)
+  Sergio Mínguez Cruces (602888)
+  Keneth Guillermo Ruiz Martínez (601403)
 
   Uso: crear un proyecto de consola en Visual Prolog y sustituir main.pro por
   este fichero (main.cl ya declara run : core::runnable).
