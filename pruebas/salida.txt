@@ -1,0 +1,157 @@
+Sistema de concesión de préstamos personales
+Expediente a analizar (por ejemplo EXP-003; Enter para todos): 
+=== EXP-001 - Ana López (35 años) ===
+Préstamo personalConsumo (consumoGeneral): 15000.00 EUR a 5 años, interés anual 7.00
+Cuota mensual: 297.02 EUR
+Ingresos computables: 2566.67 EUR/mes
+Tasa de esfuerzo: 0.12 (riesgo bajo)
+DECISIÓN: aprobar
+  - cumple todos los criterios del sistema
+
+=== EXP-002 - Luis Martín (41 años) ===
+Préstamo personalConsumo (vehiculo): 12000.00 EUR a 4 años, interés anual 8.00
+Cuota mensual: 292.96 EUR
+Ingresos computables: 2216.67 EUR/mes
+Tasa de esfuerzo: 0.24 (riesgo bajo)
+DECISIÓN: denegar
+  - D4: mora en CIRBE de 3500.00 EUR (más de 1.000 EUR)
+También se cumplen (no deciden por la prioridad):
+  - V2: impagos de bajo peso en ficheros negativos. Pedir aclaración al cliente
+
+=== EXP-003 - Marta Ruiz (52 años) ===
+Préstamo hipotecario (compraPrimeraVivienda): 200000.00 EUR a 30 años, interés anual 3.00
+Cuota mensual: 843.21 EUR
+Ingresos computables: 3500.00 EUR/mes
+Tasa de esfuerzo: 0.33 (riesgo bajo)
+Loan to value: 0.87 (límite 0.80)
+DECISIÓN: devolverAOficina
+  - V4: el titular no tiene empleo estable. Condición: exigirAvalista
+  - V8: LTV de 0.87 supera el límite de 0.80. Condición: reducirImporte
+También se cumplen (no deciden por la prioridad):
+  - E2: plazo de 30 años supera el máximo autorizado (25 años)
+
+=== EXP-004 - Pedro Gómez (38 años) ===
+Préstamo personalConsumo (reforma): 30000.00 EUR a 9 años, interés anual 6.00
+Cuota mensual: 360.17 EUR
+Ingresos computables: 2800.00 EUR/mes
+Tasa de esfuerzo: 0.13 (riesgo bajo)
+DECISIÓN: escalar
+  - E3: consumo a 9 años, tramo excepcional de 8 a 10 años
+
+=== EXP-005 - Hugo Sanz (17 años) ===
+Préstamo personalConsumo (estudios): 6000.00 EUR a 3 años, interés anual 9.00
+Cuota mensual: 190.80 EUR
+Ingresos computables: 1750.00 EUR/mes
+Tasa de esfuerzo: 0.11 (riesgo bajo)
+DECISIÓN: denegar
+  - D1: el titular es menor de edad
+También se cumplen (no deciden por la prioridad):
+  - V4: el titular no tiene empleo estable. Condición: exigirAvalista
+
+=== EXP-006 - Elena Navarro (45 años) ===
+Préstamo personalConsumo (consumoGeneral): 8000.00 EUR a 4 años, interés anual 8.00
+Cuota mensual: 195.30 EUR
+DECISIÓN: denegar
+  - D2: el titular está en desempleo
+También se cumplen (no deciden por la prioridad):
+  - V1: falta documentación o no está vigente: nómina
+
+=== EXP-007 - Jorge Iglesias (29 años) ===
+Préstamo personalConsumo (consumoGeneral): 5000.00 EUR a 4 años, interés anual 7.00
+Cuota mensual: 119.73 EUR
+Ingresos computables: 1050.00 EUR/mes
+Tasa de esfuerzo: 0.11 (riesgo bajo)
+DECISIÓN: denegar
+  - D3: ingresos de 1050.00 EUR/mes, por debajo del SMI
+
+=== EXP-008 - Sara Molina (33 años) ===
+Préstamo personalConsumo (reforma): 25000.00 EUR a 5 años, interés anual 7.00
+Cuota mensual: 495.03 EUR
+Ingresos computables: 2100.00 EUR/mes
+Tasa de esfuerzo: 0.66 (riesgo alto)
+DECISIÓN: denegar
+  - D5: tasa de esfuerzo de 0.66 (supera 0.60)
+
+=== EXP-009 - Raúl Ortega (47 años) ===
+Préstamo personalConsumo (reforma): 18000.00 EUR a 6 años, interés anual 6.50
+Cuota mensual: 302.58 EUR
+Ingresos computables: 3000.00 EUR/mes
+Tasa de esfuerzo: 0.10 (riesgo bajo)
+DECISIÓN: devolverAOficina
+  - V1: falta documentación o no está vigente: CIRBE
+
+=== EXP-010 - Lucía Castro (31 años) ===
+Préstamo personalConsumo (consumoGeneral): 9000.00 EUR a 4 años, interés anual 7.50
+Cuota mensual: 217.61 EUR
+Ingresos computables: 2333.33 EUR/mes
+Tasa de esfuerzo: 0.09 (riesgo bajo)
+DECISIÓN: devolverAOficina
+  - V2: impagos de bajo peso en ficheros negativos. Pedir aclaración al cliente
+
+=== EXP-011 - Antonio Rubio (72 años) ===
+Préstamo personalConsumo (reforma): 15000.00 EUR a 8 años, interés anual 6.00
+Cuota mensual: 197.12 EUR
+Ingresos computables: 2916.67 EUR/mes
+Tasa de esfuerzo: 0.07 (riesgo bajo)
+DECISIÓN: devolverAOficina
+  - V3: edad + plazo = 80 (>= 80). Condición: exigirAvalista o pignorarSaldos
+
+=== EXP-012 - Carmen Vidal (39 años) ===
+Préstamo personalConsumo (consumoGeneral): 20000.00 EUR a 6 años, interés anual 7.00
+Cuota mensual: 340.98 EUR
+Ingresos computables: 2333.33 EUR/mes
+Tasa de esfuerzo: 0.45 (riesgo medio)
+DECISIÓN: devolverAOficina
+  - V5: tasa de esfuerzo de 0.45 (entre 0.40 y 0.60). Condición: exigirAvalista
+
+=== EXP-013 - Olivier Dubois (36 años) ===
+Préstamo personalConsumo (consumoGeneral): 10000.00 EUR a 4 años, interés anual 7.00
+Cuota mensual: 239.46 EUR
+Ingresos computables: 2600.00 EUR/mes
+Tasa de esfuerzo: 0.09 (riesgo bajo)
+DECISIÓN: devolverAOficina
+  - V6: el titular no es residente. Condición: exigirAvalista o pignorarSaldos
+
+=== EXP-014 - Iván Herrera (27 años) ===
+Préstamo personalConsumo (vehiculo): 22000.00 EUR a 7 años, interés anual 6.00
+Cuota mensual: 321.39 EUR
+Ingresos computables: 2450.00 EUR/mes
+Tasa de esfuerzo: 0.13 (riesgo bajo)
+DECISIÓN: devolverAOficina
+  - V7: plazo de 7 años supera el máximo de 5 para vehiculo. Condición: reducir plazo
+
+=== EXP-015 - Beatriz Santos (44 años) ===
+Préstamo hipotecario (compraOtraVivienda): 300000.00 EUR a 25 años, interés anual 3.00
+Cuota mensual: 1422.63 EUR
+Ingresos computables: 7000.00 EUR/mes
+Tasa de esfuerzo: 0.20 (riesgo bajo)
+Loan to value: 0.67 (límite 0.70)
+DECISIÓN: escalar
+  - E1: importe de 300000.00 EUR supera el máximo autorizado (250000.00 EUR)
+
+=== EXP-016 - Daniel Prieto (34 años) ===
+Préstamo hipotecario (compraPrimeraVivienda): 180000.00 EUR a 28 años, interés anual 3.20
+Cuota mensual: 811.75 EUR
+Ingresos computables: 3383.33 EUR/mes
+Tasa de esfuerzo: 0.30 (riesgo bajo)
+Loan to value: 0.75 (límite 0.80)
+DECISIÓN: escalar
+  - E2: plazo de 28 años supera el máximo autorizado (25 años)
+
+=== EXP-017 - Rosa Delgado (76 años) ===
+Préstamo personalConsumo (consumoGeneral): 10000.00 EUR a 5 años, interés anual 6.00
+Cuota mensual: 193.33 EUR
+Ingresos computables: 2216.67 EUR/mes
+Tasa de esfuerzo: 0.09 (riesgo bajo)
+DECISIÓN: aprobar
+  - cumple todos los criterios del sistema
+
+=== EXP-018 - Marcos Gil (26 años) ===
+Préstamo personalConsumo (consumoGeneral): 7000.00 EUR a 4 años, interés anual 7.50
+Cuota mensual: 169.25 EUR
+Ingresos computables: 1983.33 EUR/mes
+Tasa de esfuerzo: 0.09 (riesgo bajo)
+DECISIÓN: aprobar
+  - cumple todos los criterios del sistema
+
+Pulsa Enter para salir.

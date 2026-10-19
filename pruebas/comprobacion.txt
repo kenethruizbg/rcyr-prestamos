@@ -1,0 +1,20 @@
+Exp.     Esperado          Reglas     Obtenido          Reglas     OK
+EXP-001  aprobar           F4         aprobar           F4         sí
+EXP-002  denegar           D4         denegar           D4         sí
+EXP-003  devolverAOficina  V4 V8      devolverAOficina  V4 V8      sí
+EXP-004  escalar           E3         escalar           E3         sí
+EXP-005  denegar           D1         denegar           D1         sí
+EXP-006  denegar           D2         denegar           D2         sí
+EXP-007  denegar           D3         denegar           D3         sí
+EXP-008  denegar           D5         denegar           D5         sí
+EXP-009  devolverAOficina  V1         devolverAOficina  V1         sí
+EXP-010  devolverAOficina  V2         devolverAOficina  V2         sí
+EXP-011  devolverAOficina  V3         devolverAOficina  V3         sí
+EXP-012  devolverAOficina  V5         devolverAOficina  V5         sí
+EXP-013  devolverAOficina  V6         devolverAOficina  V6         sí
+EXP-014  devolverAOficina  V7         devolverAOficina  V7         sí
+EXP-015  escalar           E1         escalar           E1         sí
+EXP-016  escalar           E2         escalar           E2         sí
+EXP-017  aprobar           F4         aprobar           F4         sí
+EXP-018  aprobar           F4         aprobar           F4         sí
+Casos correctos: 18 de 18

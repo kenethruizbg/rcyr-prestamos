@@ -7,8 +7,9 @@
   Sergio Mínguez Cruces (602888)
   Keneth Guillermo Ruiz Martínez (601403)
 
-  Uso: crear un proyecto de consola en Visual Prolog y sustituir main.pro por
-  este fichero (main.cl ya declara run : core::runnable).
+  Uso: abrir rcyr.vipprj en Visual Prolog 11 y ejecutar (F5). También
+  funciona solo: crear un proyecto de consola nuevo y sustituir su main.pro
+  por este fichero (main.cl ya declara run : core::runnable).
 
   Estructura
     1. Dominios      -> atributos enumerados de la ontología (Protégé).
@@ -17,7 +18,9 @@
                         cuota, tasa de esfuerzo, LTV, empleo estable...
     4. Reglas (20)   -> D1-D5 denegar, E1-E3 escalar, V1-V8 devolver a
                         oficina y F1-F4 decisión final por prioridad.
-    5. Casos de prueba (4) y programa principal.
+    5. Casos de prueba (18, al menos uno por regla).
+    6. Programa principal: pide un expediente (o Enter para todos) y escribe
+       la decisión con las reglas que la justifican.
 
   Simplificaciones respecto a la ontología (acordadas al recortar reglas)
     - Un préstamo tiene un único titular (la ontología no recoge cotitulares),
@@ -32,6 +35,10 @@
       reputacional, riesgo país, sector sensible, alquiler, pensión
       alimentaria, bonus, precio de compra y ubicación de la garantía.
 *****************************************************************************/
+
+% Clases de la PFC que usa el programa además de las de la plantilla.
+#include @"pfc\list\list.ph"
+#include @"pfc\string\string.ph"
 
 implement main
     open core
