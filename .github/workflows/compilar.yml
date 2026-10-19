@@ -26,6 +26,10 @@ jobs:
           }
           foreach ($f in 'main.cl','main.ph','main.pack','main.pro') { Write-Output "=== plantilla $f"; Get-Content "build\$f" }
           Copy-Item main.pro build\main.pro -Force
+          $pfc = Get-ChildItem -Recurse vip -Directory -Filter pfc | Select-Object -First 1
+          foreach ($n in 'string.ph','list.ph') {
+            Get-ChildItem -Recurse $pfc.FullName -Filter $n | ForEach-Object { 'pfc' + $_.FullName.Substring($pfc.FullName.Length) }
+          }
       - name: Compilar
         shell: pwsh
         run: |
