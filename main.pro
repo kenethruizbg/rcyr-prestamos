@@ -367,70 +367,197 @@ clauses
 /*---------------------------------------------------------------------------
   5. CASOS DE PRUEBA
      Visual Prolog exige que las cláusulas de un mismo predicado estén
-     juntas, así que los hechos van agrupados por relación.
+     juntas, así que los hechos van agrupados por relación. Hay un caso por
+     regla: cada una de las 20 reglas decide al menos un expediente.
 
-     Caso 1 - Ana (T1, EXP-001). Consumo de 15.000 EUR a 5 años, indefinida
-       con 6 años de antigüedad, sin deudas. Cuota 297,02; tasa 0,12 (bajo).
-       Esperado: APROBAR.
-     Caso 2 - Luis (T2, EXP-002). Vehículo de 12.000 EUR a 4 años, con 3.500
-       EUR de mora en CIRBE y un recibo pequeño en ASNEF. Cuota 292,96; tasa
-       0,24 (bajo). Esperado: DENEGAR por D4 (la denegación tiene prioridad
-       sobre V2).
-     Caso 3 - Marta (T3, EXP-003). Hipoteca de 200.000 EUR a 30 años para
-       primera vivienda tasada en 230.000 EUR, contrato temporal de 1,5 años.
-       Cuota 843,21; tasa 0,33 (bajo); LTV 0,87 > 0,80. Edad + plazo = 82,
-       pero la garantía hipotecaria sirve de refuerzo, así que V3 no salta.
-       Esperado: DEVOLVER A OFICINA por V4 (empleo) y V8 (LTV).
-     Caso 4 - Pedro (T4, EXP-004). Consumo de 30.000 EUR a 9 años para una
-       reforma, funcionario con 10 años. Cuota 360,17; tasa 0,13 (bajo).
-       Esperado: ESCALAR por E3 (tramo excepcional de 8 a 10 años).
+     Exp.  Titular  Situación                                   Esperado
+     001   Ana      Consumo normal, todo en orden               aprobar (F4)
+     002   Luis     3.500 EUR de mora en CIRBE                  denegar (D4)
+     003   Marta    Hipoteca con LTV 0,87 y contrato temporal   devolver (V4, V8)
+     004   Pedro    Consumo a 9 años                            escalar (E3)
+     005   Hugo     17 años                                     denegar (D1)
+     006   Elena    En desempleo                                denegar (D2)
+     007   Jorge    Media jornada, 1.050 EUR/mes                denegar (D3)
+     008   Sara     Tasa de esfuerzo 0,66                       denegar (D5)
+     009   Raúl     Autónomo con la CIRBE caducada              devolver (V1)
+     010   Lucía    Recibo de 300 EUR sin pagar en Experian     devolver (V2)
+     011   Antonio  72 años + 8 de plazo, sin garantía          devolver (V3)
+     012   Carmen   Tasa de esfuerzo 0,45 sin avalista          devolver (V5)
+     013   Olivier  No residente, sin garantía                  devolver (V6)
+     014   Iván     Coche a 7 años (máximo 5)                   devolver (V7)
+     015   Beatriz  Hipoteca de 300.000 EUR (máximo 250.000)    escalar (E1)
+     016   Daniel   Hipoteca a 28 años (máximo 25)              escalar (E2)
+     017   Rosa     76 años + 5, con pignoración de saldos      aprobar (F4)
+     018   Marcos   Contrato temporal, con avalista             aprobar (F4)
+
+     Los pensionistas (Antonio, Rosa) se representan con una nómina y un
+     contrato indefinido, porque un jubilado cuenta como empleo estable.
 ---------------------------------------------------------------------------*/
 clauses
-    prestamista("Analista de riesgos nivel 1", 250000.0, 30.0).
+    % El analista de nivel 1 puede aprobar hasta 250.000 EUR y 25 años.
+    prestamista("Analista de riesgos nivel 1", 250000.0, 25.0).
 
-    prestatario("T1", "Ana López", 35, true, true, 0.0).
-    prestatario("T2", "Luis Martín", 41, true, true, 250.0).
-    prestatario("T3", "Marta Ruiz", 52, true, true, 300.0).
-    prestatario("T4", "Pedro Gómez", 38, true, true, 0.0).
+    prestatario("T01", "Ana López", 35, true, true, 0.0).
+    prestatario("T02", "Luis Martín", 41, true, true, 250.0).
+    prestatario("T03", "Marta Ruiz", 52, true, true, 300.0).
+    prestatario("T04", "Pedro Gómez", 38, true, true, 0.0).
+    prestatario("T05", "Hugo Sanz", 17, true, false, 0.0).
+    prestatario("T06", "Elena Navarro", 45, true, true, 0.0).
+    prestatario("T07", "Jorge Iglesias", 29, true, true, 0.0).
+    prestatario("T08", "Sara Molina", 33, true, true, 900.0).
+    prestatario("T09", "Raúl Ortega", 47, true, true, 0.0).
+    prestatario("T10", "Lucía Castro", 31, true, true, 0.0).
+    prestatario("T11", "Antonio Rubio", 72, true, true, 0.0).
+    prestatario("T12", "Carmen Vidal", 39, true, true, 700.0).
+    prestatario("T13", "Olivier Dubois", 36, false, true, 0.0).
+    prestatario("T14", "Iván Herrera", 27, true, true, 0.0).
+    prestatario("T15", "Beatriz Santos", 44, true, true, 0.0).
+    prestatario("T16", "Daniel Prieto", 34, true, true, 200.0).
+    prestatario("T17", "Rosa Delgado", 76, true, true, 0.0).
+    prestatario("T18", "Marcos Gil", 26, true, true, 0.0).
 
-    prestamo("EXP-001", "T1", 15000.0, 5.0, 7.0, personalConsumo, consumoGeneral).
-    prestamo("EXP-002", "T2", 12000.0, 4.0, 8.0, personalConsumo, vehiculo).
-    prestamo("EXP-003", "T3", 200000.0, 30.0, 3.0, hipotecario, compraPrimeraVivienda).
-    prestamo("EXP-004", "T4", 30000.0, 9.0, 6.0, personalConsumo, reforma).
+    prestamo("EXP-001", "T01", 15000.0, 5.0, 7.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-002", "T02", 12000.0, 4.0, 8.0, personalConsumo, vehiculo).
+    prestamo("EXP-003", "T03", 200000.0, 30.0, 3.0, hipotecario, compraPrimeraVivienda).
+    prestamo("EXP-004", "T04", 30000.0, 9.0, 6.0, personalConsumo, reforma).
+    prestamo("EXP-005", "T05", 6000.0, 3.0, 9.0, personalConsumo, estudios).
+    prestamo("EXP-006", "T06", 8000.0, 4.0, 8.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-007", "T07", 5000.0, 4.0, 7.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-008", "T08", 25000.0, 5.0, 7.0, personalConsumo, reforma).
+    prestamo("EXP-009", "T09", 18000.0, 6.0, 6.5, personalConsumo, reforma).
+    prestamo("EXP-010", "T10", 9000.0, 4.0, 7.5, personalConsumo, consumoGeneral).
+    prestamo("EXP-011", "T11", 15000.0, 8.0, 6.0, personalConsumo, reforma).
+    prestamo("EXP-012", "T12", 20000.0, 6.0, 7.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-013", "T13", 10000.0, 4.0, 7.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-014", "T14", 22000.0, 7.0, 6.0, personalConsumo, vehiculo).
+    prestamo("EXP-015", "T15", 300000.0, 25.0, 3.0, hipotecario, compraOtraVivienda).
+    prestamo("EXP-016", "T16", 180000.0, 28.0, 3.2, hipotecario, compraPrimeraVivienda).
+    prestamo("EXP-017", "T17", 10000.0, 5.0, 6.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-018", "T18", 7000.0, 4.0, 7.5, personalConsumo, consumoGeneral).
 
     garantia("EXP-003", hipotecaria, 230000.0, true).
+    garantia("EXP-015", hipotecaria, 450000.0, false).
+    garantia("EXP-016", hipotecaria, 240000.0, true).
+    garantia("EXP-017", pignoracionSaldos, 15000.0, false).
+    garantia("EXP-018", avalPersonal, 0.0, false).
 
-    documentoIdentidad("T1", dni, true).
-    documentoIdentidad("T2", dni, true).
-    documentoIdentidad("T3", dni, true).
-    documentoIdentidad("T4", dni, true).
+    documentoIdentidad("T01", dni, true).
+    documentoIdentidad("T02", dni, true).
+    documentoIdentidad("T03", dni, true).
+    documentoIdentidad("T04", dni, true).
+    documentoIdentidad("T05", dni, true).
+    documentoIdentidad("T06", dni, true).
+    documentoIdentidad("T07", dni, true).
+    documentoIdentidad("T08", dni, true).
+    documentoIdentidad("T09", dni, true).
+    documentoIdentidad("T10", tie, true).
+    documentoIdentidad("T11", dni, true).
+    documentoIdentidad("T12", dni, true).
+    documentoIdentidad("T13", pasaporte, true).
+    documentoIdentidad("T14", dni, true).
+    documentoIdentidad("T15", dni, true).
+    documentoIdentidad("T16", dni, true).
+    documentoIdentidad("T17", dni, true).
+    documentoIdentidad("T18", dni, true).
 
-    cirbe("T1", 0.0, 0.0, true).
-    cirbe("T2", 20000.0, 3500.0, true).
-    cirbe("T3", 0.0, 0.0, true).
-    cirbe("T4", 0.0, 0.0, true).
+    cirbe("T01", 0.0, 0.0, true).
+    cirbe("T02", 20000.0, 3500.0, true).
+    cirbe("T03", 0.0, 0.0, true).
+    cirbe("T04", 0.0, 0.0, true).
+    cirbe("T05", 0.0, 0.0, true).
+    cirbe("T06", 0.0, 0.0, true).
+    cirbe("T07", 0.0, 0.0, true).
+    cirbe("T08", 15000.0, 0.0, true).
+    cirbe("T09", 0.0, 0.0, false). % caducada
+    cirbe("T10", 0.0, 0.0, true).
+    cirbe("T11", 0.0, 0.0, true).
+    cirbe("T12", 30000.0, 0.0, true).
+    cirbe("T13", 0.0, 0.0, true).
+    cirbe("T14", 0.0, 0.0, true).
+    cirbe("T15", 0.0, 0.0, true).
+    cirbe("T16", 0.0, 0.0, true).
+    cirbe("T17", 0.0, 0.0, true).
+    cirbe("T18", 0.0, 0.0, true).
 
-    vidaLaboral("T1", indefinido, 6.0, regimenGeneral, true).
-    vidaLaboral("T2", indefinido, 4.0, regimenGeneral, true).
-    vidaLaboral("T3", temporal, 1.5, regimenGeneral, true).
-    vidaLaboral("T4", funcionario, 10.0, regimenGeneral, true).
+    vidaLaboral("T01", indefinido, 6.0, regimenGeneral, true).
+    vidaLaboral("T02", indefinido, 4.0, regimenGeneral, true).
+    vidaLaboral("T03", temporal, 1.5, regimenGeneral, true).
+    vidaLaboral("T04", funcionario, 10.0, regimenGeneral, true).
+    vidaLaboral("T05", temporal, 1.0, regimenGeneral, true).
+    vidaLaboral("T06", sinContrato, 0.0, regimenGeneral, true).
+    vidaLaboral("T07", indefinido, 3.0, regimenGeneral, true).
+    vidaLaboral("T08", indefinido, 5.0, regimenGeneral, true).
+    vidaLaboral("T09", indefinido, 8.0, regimenAutonomos, true).
+    vidaLaboral("T10", indefinido, 4.0, regimenGeneral, true).
+    vidaLaboral("T11", indefinido, 40.0, regimenGeneral, true).
+    vidaLaboral("T12", indefinido, 7.0, regimenGeneral, true).
+    vidaLaboral("T13", indefinido, 4.0, regimenGeneral, true).
+    vidaLaboral("T14", indefinido, 3.0, regimenGeneral, true).
+    vidaLaboral("T15", funcionario, 15.0, regimenGeneral, true).
+    vidaLaboral("T16", indefinido, 6.0, regimenGeneral, true).
+    vidaLaboral("T17", indefinido, 35.0, regimenGeneral, true).
+    vidaLaboral("T18", temporal, 1.0, regimenGeneral, true).
 
-    nomina("T1", 2200.0, 14, true).
-    nomina("T2", 1900.0, 14, true).
-    nomina("T3", 3000.0, 14, true).
-    nomina("T4", 2800.0, 12, true).
+    nomina("T01", 2200.0, 14, true).
+    nomina("T02", 1900.0, 14, true).
+    nomina("T03", 3000.0, 14, true).
+    nomina("T04", 2800.0, 12, true).
+    nomina("T05", 1500.0, 14, true).
+    nomina("T07", 900.0, 14, true).
+    nomina("T08", 1800.0, 14, true).
+    nomina("T10", 2000.0, 14, true).
+    nomina("T11", 2500.0, 14, true).
+    nomina("T12", 2000.0, 14, true).
+    nomina("T13", 2600.0, 12, true).
+    nomina("T14", 2100.0, 14, true).
+    nomina("T15", 6000.0, 14, true).
+    nomina("T16", 2900.0, 14, true).
+    nomina("T17", 1900.0, 14, true).
+    nomina("T18", 1700.0, 14, true).
 
-    ficheroNegativo("T2", asnef, 120.0, false).
+    irpf("T09", 36000.0, true).
+
+    ficheroNegativo("T02", asnef, 120.0, false).
+    ficheroNegativo("T10", experian, 300.0, false).
 
 /*---------------------------------------------------------------------------
-  6. PROGRAMA PRINCIPAL: informe de cada expediente
+  6. PROGRAMA PRINCIPAL
+     Pide un expediente (o Enter para todos) y escribe su informe: datos
+     calculados, decisión, reglas que la motivan y reglas que también se
+     cumplen pero no deciden por la prioridad.
 ---------------------------------------------------------------------------*/
 class predicates
     informe : (string Expediente).
+    otraRegla : (string Expediente, resultado Resultado, string Motivo [out]) nondeterm.
+    escribirLista : (string Titulo, string* Motivos).
+    leerLinea : () -> string Linea.
     fmt : (real Numero) -> string Texto.
 
 clauses
     fmt(Numero) = string::format("%.2f", Numero).
+
+    leerLinea() = Linea :-
+        try
+            Linea = string::toUpperCase(string::trim(stdio::readLine()))
+        catch _ do
+            Linea = ""
+        end try.
+
+    % Reglas de las otras categorías que también se cumplen.
+    otraRegla(Expediente, Resultado, Motivo) :-
+        Resultado <> devolverAOficina,
+        devolucion(Expediente, Motivo).
+    otraRegla(Expediente, Resultado, Motivo) :-
+        Resultado <> escalar,
+        escalado(Expediente, Motivo).
+
+    escribirLista(_, []) :-
+        !.
+    escribirLista(Titulo, Motivos) :-
+        stdio::writef("%\n", Titulo),
+        foreach Motivo = list::getMember_nd(Motivos) do
+            stdio::writef("  - %\n", Motivo)
+        end foreach.
 
     informe(Expediente) :-
         prestamo(Expediente, IdTitular, Importe, Plazo, Interes, TipoPrestamo, Finalidad),
@@ -452,20 +579,27 @@ clauses
             stdio::writef("Loan to value: % (límite %)\n", fmt(LTV), fmt(Limite))
         end if,
         decidir(Expediente, Resultado, Motivos),
-        stdio::writef("DECISIÓN: %\n", Resultado),
-        foreach Motivo = list::getMember_nd(Motivos) do
-            stdio::writef("  - %\n", Motivo)
-        end foreach.
+        escribirLista(string::format("DECISIÓN: %", Resultado), Motivos),
+        Otras = [ Motivo || otraRegla(Expediente, Resultado, Motivo) ],
+        escribirLista("También se cumplen (no deciden por la prioridad):", Otras).
     informe(Expediente) :-
         stdio::writef("\n=== % ===\nFaltan los datos del préstamo o del titular.\n", Expediente).
 
     run() :-
         stdio::write("Sistema de concesión de préstamos personales\n"),
-        foreach prestamo(Expediente, _, _, _, _, _, _) do
-            informe(Expediente)
-        end foreach,
+        stdio::write("Expediente a analizar (por ejemplo EXP-003; Enter para todos): "),
+        Peticion = leerLinea(),
+        if Peticion = "" then
+            foreach prestamo(Expediente, _, _, _, _, _, _) do
+                informe(Expediente)
+            end foreach
+        elseif prestamo(Peticion, _, _, _, _, _, _) then
+            informe(Peticion)
+        else
+            stdio::writef("\nNo existe el expediente %.\n", Peticion)
+        end if,
         stdio::write("\nPulsa Enter para salir."),
-        _ = stdio::readLine().
+        _ = leerLinea().
 
 end implement main
 

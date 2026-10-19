@@ -1,0 +1,19 @@
+# Resultado esperado de cada expediente: expediente, decisión y reglas que la motivan.
+EXP-001 aprobar F4
+EXP-002 denegar D4
+EXP-003 devolverAOficina V4 V8
+EXP-004 escalar E3
+EXP-005 denegar D1
+EXP-006 denegar D2
+EXP-007 denegar D3
+EXP-008 denegar D5
+EXP-009 devolverAOficina V1
+EXP-010 devolverAOficina V2
+EXP-011 devolverAOficina V3
+EXP-012 devolverAOficina V5
+EXP-013 devolverAOficina V6
+EXP-014 devolverAOficina V7
+EXP-015 escalar E1
+EXP-016 escalar E2
+EXP-017 aprobar F4
+EXP-018 aprobar F4

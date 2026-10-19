@@ -1,7 +1,7 @@
-# Compila el proyecto con Visual Prolog 11 Personal Edition en un runner
-# Windows y ejecuta los casos de prueba. La salida queda en el log del paso
-# "Ejecutar los casos de prueba" y en el artefacto "salida" (incluye el .exe).
-name: compilar
+# Compila el proyecto con Visual Prolog 11 Personal Edition en Windows,
+# ejecuta los 18 casos de prueba, comprueba que cada uno da la decisión y las
+# reglas esperadas (pruebas/esperado.txt) y guarda capturas de la consola.
+name: compilar y probar
 on:
   push:
   workflow_dispatch:
@@ -10,26 +10,41 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Descargar y extraer Visual Prolog 11 PE
+
+      - name: Descargar Visual Prolog 11 Personal Edition
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri https://www.visual-prolog.com/download/vippe/vip1112.msi -OutFile vip.msi -UserAgent "Mozilla/5.0"
           Start-Process msiexec.exe -Wait -ArgumentList '/a', "$PWD\vip.msi", '/qn', "TARGETDIR=$PWD\vip"
+
       - name: Compilar
         shell: pwsh
         run: |
           $b = Get-ChildItem -Recurse vip -Filter vipBuilder.exe | Select-Object -First 1
           & $b.FullName /build /platform x64 rcyr.vipprj
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Ejecutar los casos de prueba
         shell: pwsh
         run: |
+          [Console]::OutputEncoding = [Text.Encoding]::UTF8
           "`n" | & .\exe64\rcyr.exe | Tee-Object -FilePath salida.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Comprobar los resultados esperados
+        shell: pwsh
+        run: pwsh pruebas/comprobar.ps1 salida.txt
+
+      - name: Capturas de pantalla
+        shell: pwsh
+        continue-on-error: true
+        run: pwsh pruebas/capturas.ps1 exe64\rcyr.exe
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: salida
+          name: resultados
           path: |
             salida.txt
             exe64/rcyr.exe
+            docs/capturas/*.png
