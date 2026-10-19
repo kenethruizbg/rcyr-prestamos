@@ -1,0 +1,49 @@
+name: compilar
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  compilar:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descargar y extraer Visual Prolog 11 PE
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://www.visual-prolog.com/download/vippe/vip1112.msi -OutFile vip.msi -UserAgent "Mozilla/5.0"
+          Start-Process msiexec.exe -Wait -ArgumentList '/a', "$PWD\vip.msi", '/qn', "TARGETDIR=$PWD\vip"
+      - name: Crear el proyecto de consola con nuestro main.pro
+        shell: pwsh
+        run: |
+          $tpl = Get-ChildItem -Recurse vip -Directory -Filter 'Console application' | Where-Object { $_.FullName -match 'ProjectTemplates' } | Select-Object -First 1
+          New-Item -ItemType Directory build | Out-Null
+          foreach ($f in Get-ChildItem $tpl.FullName) {
+            $dest = Join-Path build ($f.Name -replace '\$\$\(Project\.name\)', 'rcyr')
+            if ($f.Extension -eq '.ico') { Copy-Item $f.FullName $dest; continue }
+            $txt = Get-Content $f.FullName -Raw
+            $txt = $txt -replace '\$\$\(Project\.name\)', 'rcyr' -replace '\$\$\(Project\.description\)', 'RCyR prestamos' -replace '\$\$\(Project\.pattern\)', 'Console application' -replace '\$\$\([^)]*\)', 'rcyr'
+            Set-Content -Path $dest -Value $txt -Encoding utf8
+          }
+          foreach ($f in 'main.cl','main.ph','main.pack','main.pro') { Write-Output "=== plantilla $f"; Get-Content "build\$f" }
+          Copy-Item main.pro build\main.pro -Force
+      - name: Compilar
+        shell: pwsh
+        run: |
+          $b = Get-ChildItem -Recurse vip -Filter vipBuilder.exe | Select-Object -First 1
+          & $b.FullName /ver
+          & $b.FullName /build /platform x64 build\rcyr.vipprj
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Ejecutar los casos de prueba
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Recurse build -Filter rcyr*.exe | Select-Object -First 1
+          Write-Output "exe: $($exe.FullName)"
+          "`n" | & $exe.FullName | Tee-Object -FilePath salida.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: salida
+          path: |
+            salida.txt
+            build/**/*.exe
