@@ -1,0 +1,17 @@
+% own pack
+#include @"main.ph"
+
+% privately used packages
+#include @"pfc\commandLineParser\commandLineParser.ph"
+#include @"pfc\programControl\programControl.ph"
+#include @"pfc\console\console.ph"
+#include @"pfc\core.ph"
+#include @"pfc\stream\stream.ph"
+
+#include @"pfc\list\list.ph"
+#include @"pfc\string\string.ph"
+
+% implementations
+#include @"main.pro"
+
+

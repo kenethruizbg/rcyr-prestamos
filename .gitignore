@@ -1,0 +1,10 @@
+obj/
+obj64/
+exe/
+exe64/
+deb/
+deb64/
+*.env
+resourceIdentifiers.i
+*.bro
+*.rlt
