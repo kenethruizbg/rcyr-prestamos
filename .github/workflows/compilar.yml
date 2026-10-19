@@ -26,10 +26,10 @@ jobs:
           }
           foreach ($f in 'main.cl','main.ph','main.pack','main.pro') { Write-Output "=== plantilla $f"; Get-Content "build\$f" }
           Copy-Item main.pro build\main.pro -Force
-          $pfc = Get-ChildItem -Recurse vip -Directory -Filter pfc | Select-Object -First 1
-          foreach ($n in 'string.ph','list.ph') {
-            Get-ChildItem -Recurse $pfc.FullName -Filter $n | ForEach-Object { 'pfc' + $_.FullName.Substring($pfc.FullName.Length) }
-          }
+          $pack = Get-Content build\main.pack -Raw
+          $pack = $pack -replace '% implementations', "#include @`"pfc\list\list.ph`"`r`n#include @`"pfc\string\string.ph`"`r`n`r`n% implementations"
+          Set-Content -Path build\main.pack -Value $pack -Encoding utf8
+          Get-Content build\main.pack
       - name: Compilar
         shell: pwsh
         run: |
@@ -51,3 +51,10 @@ jobs:
           path: |
             salida.txt
             build/**/*.exe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: proyecto
+          path: |
+            build/*.*
+            !build/*.exe
