@@ -366,55 +366,61 @@ clauses
 
 /*---------------------------------------------------------------------------
   5. CASOS DE PRUEBA
-     Un solo prestamista para todos los expedientes.
-     Resultado esperado de cada caso en su comentario.
+     Visual Prolog exige que las cláusulas de un mismo predicado estén
+     juntas, así que los hechos van agrupados por relación.
+
+     Caso 1 - Ana (T1, EXP-001). Consumo de 15.000 EUR a 5 años, indefinida
+       con 6 años de antigüedad, sin deudas. Cuota 297,02; tasa 0,12 (bajo).
+       Esperado: APROBAR.
+     Caso 2 - Luis (T2, EXP-002). Vehículo de 12.000 EUR a 4 años, con 3.500
+       EUR de mora en CIRBE y un recibo pequeño en ASNEF. Cuota 292,96; tasa
+       0,24 (bajo). Esperado: DENEGAR por D4 (la denegación tiene prioridad
+       sobre V2).
+     Caso 3 - Marta (T3, EXP-003). Hipoteca de 200.000 EUR a 30 años para
+       primera vivienda tasada en 230.000 EUR, contrato temporal de 1,5 años.
+       Cuota 843,21; tasa 0,33 (bajo); LTV 0,87 > 0,80. Edad + plazo = 82,
+       pero la garantía hipotecaria sirve de refuerzo, así que V3 no salta.
+       Esperado: DEVOLVER A OFICINA por V4 (empleo) y V8 (LTV).
+     Caso 4 - Pedro (T4, EXP-004). Consumo de 30.000 EUR a 9 años para una
+       reforma, funcionario con 10 años. Cuota 360,17; tasa 0,13 (bajo).
+       Esperado: ESCALAR por E3 (tramo excepcional de 8 a 10 años).
 ---------------------------------------------------------------------------*/
 clauses
     prestamista("Analista de riesgos nivel 1", 250000.0, 30.0).
 
-    % Caso 1 - Ana. Consumo de 15.000 EUR a 5 años, indefinida con 6 años de
-    % antigüedad, sin deudas. Cuota 297,02; tasa 0,12 (bajo).
-    % Esperado: APROBAR.
     prestatario("T1", "Ana López", 35, true, true, 0.0).
-    prestamo("EXP-001", "T1", 15000.0, 5.0, 7.0, personalConsumo, consumoGeneral).
-    documentoIdentidad("T1", dni, true).
-    cirbe("T1", 0.0, 0.0, true).
-    vidaLaboral("T1", indefinido, 6.0, regimenGeneral, true).
-    nomina("T1", 2200.0, 14, true).
-
-    % Caso 2 - Luis. Vehículo de 12.000 EUR a 4 años, con 3.500 EUR de mora en
-    % CIRBE y un recibo pequeño en ASNEF. Cuota 292,96; tasa 0,24 (bajo).
-    % Esperado: DENEGAR por D4 (la denegación tiene prioridad sobre V2).
     prestatario("T2", "Luis Martín", 41, true, true, 250.0).
-    prestamo("EXP-002", "T2", 12000.0, 4.0, 8.0, personalConsumo, vehiculo).
-    documentoIdentidad("T2", dni, true).
-    cirbe("T2", 20000.0, 3500.0, true).
-    vidaLaboral("T2", indefinido, 4.0, regimenGeneral, true).
-    nomina("T2", 1900.0, 14, true).
-    ficheroNegativo("T2", asnef, 120.0, false).
-
-    % Caso 3 - Marta. Hipoteca de 200.000 EUR a 30 años para primera vivienda
-    % tasada en 230.000 EUR, contrato temporal de 1,5 años. Cuota 843,21;
-    % tasa 0,33 (bajo); LTV 0,87 > 0,80. Edad + plazo = 82, pero la garantía
-    % hipotecaria sirve de refuerzo, así que V3 no salta.
-    % Esperado: DEVOLVER A OFICINA por V4 (empleo) y V8 (LTV).
     prestatario("T3", "Marta Ruiz", 52, true, true, 300.0).
-    prestamo("EXP-003", "T3", 200000.0, 30.0, 3.0, hipotecario, compraPrimeraVivienda).
-    garantia("EXP-003", hipotecaria, 230000.0, true).
-    documentoIdentidad("T3", dni, true).
-    cirbe("T3", 0.0, 0.0, true).
-    vidaLaboral("T3", temporal, 1.5, regimenGeneral, true).
-    nomina("T3", 3000.0, 14, true).
-
-    % Caso 4 - Pedro. Consumo de 30.000 EUR a 9 años para una reforma,
-    % funcionario con 10 años. Cuota 360,17; tasa 0,13 (bajo).
-    % Esperado: ESCALAR por E3 (tramo excepcional de 8 a 10 años).
     prestatario("T4", "Pedro Gómez", 38, true, true, 0.0).
+
+    prestamo("EXP-001", "T1", 15000.0, 5.0, 7.0, personalConsumo, consumoGeneral).
+    prestamo("EXP-002", "T2", 12000.0, 4.0, 8.0, personalConsumo, vehiculo).
+    prestamo("EXP-003", "T3", 200000.0, 30.0, 3.0, hipotecario, compraPrimeraVivienda).
     prestamo("EXP-004", "T4", 30000.0, 9.0, 6.0, personalConsumo, reforma).
+
+    garantia("EXP-003", hipotecaria, 230000.0, true).
+
+    documentoIdentidad("T1", dni, true).
+    documentoIdentidad("T2", dni, true).
+    documentoIdentidad("T3", dni, true).
     documentoIdentidad("T4", dni, true).
+
+    cirbe("T1", 0.0, 0.0, true).
+    cirbe("T2", 20000.0, 3500.0, true).
+    cirbe("T3", 0.0, 0.0, true).
     cirbe("T4", 0.0, 0.0, true).
+
+    vidaLaboral("T1", indefinido, 6.0, regimenGeneral, true).
+    vidaLaboral("T2", indefinido, 4.0, regimenGeneral, true).
+    vidaLaboral("T3", temporal, 1.5, regimenGeneral, true).
     vidaLaboral("T4", funcionario, 10.0, regimenGeneral, true).
+
+    nomina("T1", 2200.0, 14, true).
+    nomina("T2", 1900.0, 14, true).
+    nomina("T3", 3000.0, 14, true).
     nomina("T4", 2800.0, 12, true).
+
+    ficheroNegativo("T2", asnef, 120.0, false).
 
 /*---------------------------------------------------------------------------
   6. PROGRAMA PRINCIPAL: informe de cada expediente
