@@ -1,0 +1,24 @@
+name: explorar-vip
+on: workflow_dispatch
+jobs:
+  explorar:
+    runs-on: windows-latest
+    steps:
+      - name: Descargar y extraer Visual Prolog PE
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://www.visual-prolog.com/download/vippe/vip1112.msi -OutFile vip.msi -UserAgent "Mozilla/5.0"
+          Start-Process msiexec.exe -Wait -ArgumentList '/a', "$PWD\vip.msi", '/qn', "TARGETDIR=$PWD\vip"
+          Get-ChildItem -Recurse vip -Include *.exe | Select-Object -ExpandProperty FullName
+          Get-ChildItem -Recurse vip -Include *.vipprj | Select-Object -First 15 -ExpandProperty FullName
+      - name: Ayuda de vipBuilder y ejemplo de proyecto de consola
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          $b = Get-ChildItem -Recurse vip -Filter vipBuilder*.exe | Select-Object -First 1
+          & $b.FullName /? 2>&1 | Out-String
+          & $b.FullName 2>&1 | Out-String
+          $p = Get-ChildItem -Recurse vip -Include *.vipprj | Where-Object { (Get-Content $_.FullName -Raw) -match 'console' } | Select-Object -First 1
+          Write-Output "=== $($p.FullName)"
+          Get-Content $p.FullName
+          Get-ChildItem $p.DirectoryName -Recurse | Select-Object -ExpandProperty FullName
